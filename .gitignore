@@ -1,0 +1,10 @@
+app.yaml
+playground
+node_modules
+build
+.DS_Store
+.env
+
+public/.well-known/acme-challenge
+public/.htaccess
+public/.well-known/apple-developer-merchantid-domain-association.txt
