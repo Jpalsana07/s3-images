@@ -1,42 +1,20 @@
 const express = require('express');
-const AWS = require('aws-sdk');
+const { getSignedUrl } = require('@aws-sdk/cloudfront-signer');
+require('dotenv').config();
 
-const app = express();
 const port = 8000;
+const app = express();
 
-// Configure AWS SDK with your credentials
-AWS.config.update({
-  accessKeyId: 'AKIAZ4D5EIE6ZKYQ2CAU',
-  secretAccessKey: 'vJgMeFDuKNYHyCv4Su4NcN38QocJpnvAzlfxQWvK',
-});
 
-// Create an instance of the S3 service
-const s3 = new AWS.S3();
-
-// Route to generate a signed URL for the image file
-app.get('/signed-url', (req, res) => {
-  const bucketName = '';
-  const fileName = '';
-  const expiryTime = 300; // 5 minutes
-
-  // Generate a signed URL
-  const signedUrl = s3.getSignedUrl('getObject', {
-    Bucket: bucketName,
-    Key: fileName,
-    Expires: expiryTime,
+  const imageUrl = getSignedUrl({
+    url: "https://beneathatree-test.s3.eu-north-1.amazonaws.com/pexels-giorgio-de-angelis-1413412.png",
+    dateLessThan: new Date(Date.now() + 1000 * 60 * 60), // expires in 5 minutes
+    privateKey: process.env.CLOUDFRONT_PRIVATE_KEY,
+    keyPairId: process.env.CLOUDFRONT_KEY_PAIR_ID,
   });
+  console.log("imageUrl", imageUrl);
 
-  // Log the signed URL to the console
-  console.log('Signed URL:', signedUrl);
 
-  res.send('Signed URL generated. Check the console for the URL.');
-});
-
-// Start the server
 app.listen(port, () => {
-  console.log(`Server running on port ${port}`);
+  console.log('Server is running on port 8000');
 });
-
-
-
-
